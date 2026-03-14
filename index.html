@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>flip book · pink & purple birthday</title>
+    <title>flip book · fixed gallery + flip</title>
     <!-- Font Awesome for music icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -12,9 +12,6 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         body {
@@ -26,7 +23,6 @@
             align-items: center;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 0.5rem;
-            touch-action: pan-y pinch-zoom;
         }
 
         /* main card container */
@@ -36,7 +32,6 @@
             background: transparent;
             perspective: 2500px;
             margin: 0.5rem auto;
-            touch-action: none;
         }
 
         .book-spread {
@@ -44,7 +39,6 @@
             width: 100%;
             aspect-ratio: 3 / 4;
             transform-style: preserve-3d;
-            touch-action: none;
         }
 
         /* all pages */
@@ -61,97 +55,36 @@
             display: flex;
             flex-direction: column;
             border: 2px solid rgba(255, 200, 220, 0.6);
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            overflow: hidden; /* Changed from auto to hidden - we'll control scrolling per page */
             transform-origin: center right;
-            pointer-events: auto;
         }
 
-        /* page transforms - INITIAL STATE (COVER) */
-        #page1 { 
-            z-index: 10; 
-            transform: rotateY(0deg); 
-        }
-        #page2 { 
-            z-index: 9; 
-            transform: rotateY(180deg); 
-        }
-        #page3 { 
-            z-index: 8; 
-            transform: rotateY(180deg); 
-        }
-        #page4 { 
-            z-index: 7; 
-            transform: rotateY(180deg); 
-        }
+        /* PAGE TRANSFORMS – FIXED STATES (each page rotates properly) */
+        /* ----- INITIAL (cover only) ----- */
+        #page1 { transform: rotateY(0deg); z-index: 10; }
+        #page2 { transform: rotateY(180deg); z-index: 9; }
+        #page3 { transform: rotateY(180deg); z-index: 8; }
+        #page4 { transform: rotateY(180deg); z-index: 7; }
 
-        /* STATE 1: SHOW PAGE 2 & 3 (WISHES + GALLERY) */
-        .book-spread.state-1 #page1 { 
-            transform: rotateY(-180deg); 
-            z-index: 7; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-1 #page2 { 
-            transform: rotateY(0deg); 
-            z-index: 10; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-1 #page3 { 
-            transform: rotateY(0deg); 
-            z-index: 9; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-1 #page4 { 
-            transform: rotateY(180deg); 
-            z-index: 8; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
+        /* ----- STATE 1 : pages 2 & 3 visible (wishes + gallery start) ----- */
+        .book-spread.show-wishes #page1 { transform: rotateY(-180deg); z-index: 7; }
+        .book-spread.show-wishes #page2 { transform: rotateY(0deg); z-index: 10; }
+        .book-spread.show-wishes #page3 { transform: rotateY(0deg); z-index: 9; }
+        .book-spread.show-wishes #page4 { transform: rotateY(180deg); z-index: 8; }
 
-        /* STATE 2: SHOW PAGE 3 & 4 (GALLERY + FINAL) */
-        .book-spread.state-2 #page1 { 
-            transform: rotateY(-180deg); 
-            z-index: 7; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-2 #page2 { 
-            transform: rotateY(-180deg); 
-            z-index: 8; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-2 #page3 { 
-            transform: rotateY(0deg); 
-            z-index: 10; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-2 #page4 { 
-            transform: rotateY(0deg); 
-            z-index: 9; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
+        /* ----- STATE 2 : pages 3 & 4 visible (gallery + final) ----- */
+        .book-spread.show-gallery #page1 { transform: rotateY(-180deg); z-index: 7; }
+        .book-spread.show-gallery #page2 { transform: rotateY(-180deg); z-index: 8; }
+        .book-spread.show-gallery #page3 { transform: rotateY(0deg); z-index: 10; }
+        .book-spread.show-gallery #page4 { transform: rotateY(0deg); z-index: 9; }
 
-        /* STATE 3: SHOW PAGE 4 ONLY (FINAL) */
-        .book-spread.state-3 #page1 { 
-            transform: rotateY(-180deg); 
-            z-index: 7; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-3 #page2 { 
-            transform: rotateY(-180deg); 
-            z-index: 8; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-3 #page3 { 
-            transform: rotateY(-180deg); 
-            z-index: 7; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
-        .book-spread.state-3 #page4 { 
-            transform: rotateY(0deg); 
-            z-index: 10; 
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
+        /* ----- STATE 3 : page 4 only (final) ----- */
+        .book-spread.show-final #page1 { transform: rotateY(-180deg); z-index: 7; }
+        .book-spread.show-final #page2 { transform: rotateY(-180deg); z-index: 8; }
+        .book-spread.show-final #page3 { transform: rotateY(-180deg); z-index: 9; }
+        .book-spread.show-final #page4 { transform: rotateY(0deg); z-index: 10; }
 
         /* typography */
         h2 {
@@ -163,11 +96,10 @@
             background-clip: text;
             margin-bottom: 0.4rem;
             text-align: center;
-            pointer-events: none;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
 
-        /* IMAGE CONTAINER */
+        /* image container */
         .image-container {
             width: 100%;
             height: 140px;
@@ -176,13 +108,10 @@
             background: #ffe7f2;
             margin-bottom: 0.7rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
-            pointer-events: none;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
         
         .image-container img {
@@ -190,7 +119,6 @@
             height: 100%;
             object-fit: contain;
             background: #f3d3e8;
-            display: block;
         }
         
         .placeholder-text {
@@ -208,57 +136,61 @@
             color: #c87ebd;
         }
 
-        /* GALLERY PAGE - FIXED SCROLLING */
-        .gallery-page {
-            overflow: hidden !important; /* Override page overflow */
+        /* ---------- FIXED GALLERY LAYOUT (page 3) ---------- */
+        #page3 {
+            overflow: hidden !important;       /* keep page boundary tight */
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.7rem 0.7rem 0.7rem;
         }
-        
-        .gallery-container {
+
+        .gallery-header {
+            flex-shrink: 0;
+            text-align: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .gallery-scroll-area {
             flex: 1 1 auto;
-            overflow-y: scroll !important; /* Force scroll */
-            -webkit-overflow-scrolling: touch !important;
+            min-height: 0;                     /* crucial for flex child scrolling */
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
             padding-right: 4px;
-            margin: 0.2rem 0;
+            margin: 0.2rem 0 0.3rem 0;
             scrollbar-width: thin;
-            scrollbar-color: #d9a3c9 #ffe7f2;
-            height: 100%; /* Take full height */
-            max-height: calc(100% - 80px); /* Account for title and footer */
+            border-radius: 8px;
         }
-        
-        .gallery-container::-webkit-scrollbar {
+
+        .gallery-scroll-area::-webkit-scrollbar {
             width: 4px;
-            display: block; /* Ensure scrollbar shows */
         }
-        
-        .gallery-container::-webkit-scrollbar-track {
+        .gallery-scroll-area::-webkit-scrollbar-track {
             background: #ffe7f2;
             border-radius: 10px;
         }
-        
-        .gallery-container::-webkit-scrollbar-thumb {
+        .gallery-scroll-area::-webkit-scrollbar-thumb {
             background: #d9a3c9;
             border-radius: 10px;
         }
-        
+
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.6rem;
-            padding-bottom: 0.5rem;
-            pointer-events: none;
+            gap: 0.7rem;
+            padding: 0.3rem 0.2rem 0.8rem 0.2rem;
         }
-        
+
         .gallery-grid img {
             width: 100%;
             aspect-ratio: 1/1;
             object-fit: cover;
-            border-radius: 15px 5px 15px 5px;
+            border-radius: 18px 5px 18px 5px;
             border: 2px solid white;
-            box-shadow: 0 4px 8px #d9a3c9;
-            transition: 0.2s ease;
+            box-shadow: 0 4px 10px #d9a3c9;
+            background: #f3d3e8;
         }
 
-        /* Wishes text scrolling - FIXED */
+        /* wishes text scrollable */
         .wishes-text {
             font-size: 0.95rem;
             line-height: 1.4;
@@ -267,12 +199,11 @@
             padding: 0.8rem;
             border-radius: 20px 5px 20px 5px;
             margin: 0.3rem 0;
-            flex: 1 1 auto;
+            flex: 1;
             border: 1px dashed #e2a0c0;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            pointer-events: auto;
-            max-height: calc(100% - 180px); /* Account for header and image */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
         }
 
         /* music button */
@@ -293,11 +224,7 @@
             cursor: pointer;
             z-index: 9999;
             border: 3px solid #ffd9e8;
-            transition: 0.2s;
-            opacity: 0.95;
-            pointer-events: auto !important;
-            -webkit-transform: translateZ(9999px);
-            transform: translateZ(9999px);
+            pointer-events: auto;
         }
 
         /* navigation buttons */
@@ -309,9 +236,7 @@
             justify-content: center;
             width: 100%;
             max-width: 420px;
-            position: relative;
             z-index: 9998;
-            pointer-events: auto;
         }
         
         .nav-btn {
@@ -324,16 +249,13 @@
             font-weight: 600;
             box-shadow: 0 4px 0 #6d3f74;
             cursor: pointer;
-            transition: 0.1s ease;
             border: 2px solid #fad0e3;
             flex: 1;
             min-width: 70px;
             text-align: center;
-            pointer-events: auto !important;
             -webkit-appearance: none;
-            appearance: none;
             touch-action: manipulation;
-            -webkit-tap-highlight-color: rgba(201, 126, 189, 0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
             z-index: 9999;
         }
         
@@ -346,7 +268,7 @@
             opacity: 0.4;
             transform: none;
             box-shadow: 0 4px 0 #6d3f74;
-            pointer-events: none !important;
+            pointer-events: none;
         }
 
         .page-footnote {
@@ -356,10 +278,9 @@
             margin-top: 0.2rem;
             font-style: italic;
             opacity: 0.8;
-            pointer-events: none;
             flex-shrink: 0;
         }
-
+        
         @media (max-width: 380px) {
             h2 { font-size: 1.4rem; }
             .nav-btn { font-size: 0.9rem; padding: 0.7rem 0.2rem; }
@@ -373,14 +294,10 @@
     <div class="book-spread" id="bookSpread">
         <!-- PAGE 1 (COVER) -->
         <div class="page" id="page1">
-            <div class="image-container" id="cover-container">
-                <img src="images/1.jpeg" alt="cover image" onerror="this.style.display='none'; document.getElementById('cover-placeholder').style.display='flex';">
-                <div id="cover-placeholder" class="placeholder-text" style="display: none;">
-                    <i class="fas fa-image"></i>
-                    EDIT IMAGE SIZE<br>place your photo here<br>images/1.jpeg
-                </div>
+            <div class="image-container">
+                <img src="images/1.jpeg" alt="cover image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/1.jpeg</div>';">
             </div>
-            <h2 style="margin-top: 0.2rem;"> Happy Birthday<br> Nurul Hazwani <br> My Love </h2>
+            <h2> Happy Birthday<br> Nurul Hazwani <br> My Love </h2>
             <div style="flex:1; display: flex; flex-direction: column; justify-content: center;">
                 <p style="font-size: 1.3rem; color: #b260a0; text-align: center;">💌 Flip Open 💌</p>
                 <div style="font-size: 3.5rem; text-align: center; line-height: 1.2;">🎂🎉</div>
@@ -390,12 +307,8 @@
 
         <!-- PAGE 2 (WISHES) -->
         <div class="page" id="page2">
-            <div class="image-container" id="wishes-container">
-                <img src="images/2.jpeg" alt="wishes image" onerror="this.style.display='none'; document.getElementById('wishes-placeholder').style.display='flex';">
-                <div id="wishes-placeholder" class="placeholder-text" style="display: none;">
-                    <i class="fas fa-image"></i>
-                    EDIT IMAGE SIZE<br>place your photo here<br>images/2.jpeg
-                </div>
+            <div class="image-container">
+                <img src="images/2.jpeg" alt="wishes image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/2.jpeg</div>';">
             </div>
             <h2>💖 For You 💖</h2>
             <div class="wishes-text">
@@ -408,36 +321,35 @@
             <div class="page-footnote">page 2 · wishes</div>
         </div>
 
-        <!-- PAGE 3 (GALLERY) - FIXED SCROLLING -->
-        <div class="page" id="page3" style="overflow: hidden !important;">
-            <h2 style="margin-top: 0.1rem; flex-shrink: 0;">📸 our memories</h2>
-            <div class="gallery-container" id="galleryContainer">
+        <!-- PAGE 3 (GALLERY) - SCROLLING FIXED -->
+        <div class="page" id="page3">
+            <div class="gallery-header">
+                <h2>📸 our memories</h2>
+            </div>
+            <!-- dedicated scrollable container -->
+            <div class="gallery-scroll-area" id="galleryScrollArea">
                 <div class="gallery-grid" id="galleryGrid">
-                    <!-- 20 gallery images will be inserted by JavaScript -->
+                    <!-- 20 gallery images will be injected via JS -->
                 </div>
             </div>
-            <div style="margin: 0.2rem 0; text-align: center; color: #b0729e; font-size:0.9rem; flex-shrink: 0;">❤️ 20 beautiful moments ❤️</div>
-            <div class="page-footnote" style="flex-shrink: 0;">page 3 · gallery</div>
+            <div style="text-align: center; color: #b0729e; font-size:0.9rem; margin: 0.1rem 0 0.1rem;">❤️ 20 beautiful moments ❤️</div>
+            <div class="page-footnote">page 3 · gallery</div>
         </div>
 
         <!-- PAGE 4 (FINAL WISHES) -->
         <div class="page" id="page4">
-            <div class="image-container" id="final-container">
-                <img src="images/4.jpeg" alt="final image" onerror="this.style.display='none'; document.getElementById('final-placeholder').style.display='flex';">
-                <div id="final-placeholder" class="placeholder-text" style="display: none;">
-                    <i class="fas fa-image"></i>
-                    EDIT IMAGE SIZE<br>place your photo here<br>images/4.jpeg
-                </div>
+            <div class="image-container">
+                <img src="images/4.jpeg" alt="final image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/4.jpeg</div>';">
             </div>
             <h2>✨ More Love ✨</h2>
             <div class="wishes-text">
-                <p>Jangan nakal-nakal, okay? 😏 </p>
-                <p>   1. Kurangkan marah marah, senyum selalu.</p>
-                <p>   2. Belajar rajin rajin, capai cita cita yang selalu diimpikan.</p>
-                <p>   3. Banyakkan bersabar dengan saya, saya ni pelik sikit.</p>
-                <p>   4. Maafkan saya sebab saya banyak buat silap dengan awak.</p>
-                <p>   5. Sentiasa manja sikit dengan saya, sebab itu wajib untuk kesihatan jantung saya.😌</p>
-                <p>   6. Sentiasa jaga hati sendiri, sebab hati awak ni harta paling berharga bagi saya.</p>
+                <p>Jangan nakal-nakal, okay? 😏</p>
+                <p>1. Kurangkan marah marah, senyum selalu.</p>
+                <p>2. Belajar rajin rajin, capai cita cita yang selalu diimpikan.</p>
+                <p>3. Banyakkan bersabar dengan saya, saya ni pelik sikit.</p>
+                <p>4. Maafkan saya sebab saya banyak buat silap dengan awak.</p>
+                <p>5. Sentiasa manja sikit dengan saya, sebab itu wajib untuk kesihatan jantung saya.😌</p>
+                <p>6. Sentiasa jaga hati sendiri, sebab hati awak ni harta paling berharga bagi saya.</p>
                 <p style="margin-top:0.6rem;">Forever yours, <br> Arif Musa 🦋</p>
             </div>
             <div class="page-footnote">page 4 · final wishes</div>
@@ -461,186 +373,117 @@
     <source src="music/love.mp3" type="audio/mpeg">
 </audio>
 
-<!-- ALL JAVASCRIPT INCLUDED HERE -->
 <script>
     (function() {
-        // ===== PAGE 3 GALLERY GENERATION =====
+        // ===== GALLERY GENERATION =====
         const galleryGrid = document.getElementById('galleryGrid');
         if (galleryGrid) {
-            let galleryHTML = '';
-            // Gallery images from 4.jpeg to 23.jpeg (20 images)
+            let html = '';
             for (let i = 4; i <= 23; i++) {
-                galleryHTML += `<img src="gallery/${i}.jpeg" alt="memory ${i}" onerror="this.src='https://via.placeholder.com/200x200/ffc0cb/cd7fcd?text=${i}'">`;
+                // using placeholder images with memory number
+                html += `<img src="gallery/${i}.jpeg" alt="memory ${i}" onerror="this.src='https://via.placeholder.com/300x300/ffd9e8/ca7ba3?text=memory+${i}';">`;
             }
-            galleryGrid.innerHTML = galleryHTML;
+            galleryGrid.innerHTML = html;
         }
 
-        // ===== IMAGE PLACEHOLDER HANDLING =====
-        function setupImagePlaceholder(containerId, placeholderId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            const img = container.querySelector('img');
-            const placeholder = document.getElementById(placeholderId);
-            
-            if (img && placeholder) {
-                img.onerror = function() {
-                    img.style.display = 'none';
-                    placeholder.style.display = 'flex';
-                };
-                
-                img.onload = function() {
-                    placeholder.style.display = 'none';
-                    img.style.display = 'block';
-                };
-                
-                if (img.complete && img.naturalHeight > 0) {
-                    placeholder.style.display = 'none';
-                    img.style.display = 'block';
-                }
-            }
-        }
-        
-        setupImagePlaceholder('cover-container', 'cover-placeholder');
-        setupImagePlaceholder('wishes-container', 'wishes-placeholder');
-        setupImagePlaceholder('final-container', 'final-placeholder');
-
-        // ===== BOOK FLIP FUNCTIONALITY =====
+        // ===== BOOK FLIP (FIXED STATE) =====
         const spread = document.getElementById('bookSpread');
         const resetBtn = document.getElementById('resetBtn');
         const page2Btn = document.getElementById('page2Btn');
         const page3Btn = document.getElementById('page3Btn');
         const page4Btn = document.getElementById('page4Btn');
         
-        // State: 0 = cover, 1 = page2+3, 2 = page3+4, 3 = page4 only
-        let state = 0;
-        let isAnimating = false;
+        let currentState = 0; // 0=cover, 1=wishes, 2=gallery, 3=final
 
-        function setState(newState) {
-            if (isAnimating || newState === state) return;
-            
-            isAnimating = true;
-            
+        function setState(state) {
             // Remove all state classes
-            spread.classList.remove('state-1', 'state-2', 'state-3');
+            spread.classList.remove('show-wishes', 'show-gallery', 'show-final');
             
-            // Add new state class
-            if (newState === 1) {
-                spread.classList.add('state-1');
+            if (state === 1) {
+                spread.classList.add('show-wishes');
                 resetBtn.disabled = false;
                 page2Btn.disabled = true;
                 page3Btn.disabled = false;
                 page4Btn.disabled = false;
-            } else if (newState === 2) {
-                spread.classList.add('state-2');
+            } else if (state === 2) {
+                spread.classList.add('show-gallery');
                 resetBtn.disabled = false;
                 page2Btn.disabled = false;
                 page3Btn.disabled = true;
                 page4Btn.disabled = false;
-            } else if (newState === 3) {
-                spread.classList.add('state-3');
+            } else if (state === 3) {
+                spread.classList.add('show-final');
                 resetBtn.disabled = false;
                 page2Btn.disabled = false;
                 page3Btn.disabled = false;
                 page4Btn.disabled = true;
             } else {
-                // state 0
+                // cover state (0)
                 resetBtn.disabled = true;
                 page2Btn.disabled = false;
                 page3Btn.disabled = false;
                 page4Btn.disabled = false;
             }
             
-            state = newState;
-            
-            // Reset animation flag after transition
-            setTimeout(() => {
-                isAnimating = false;
-            }, 800); // Match transition duration
+            currentState = state;
         }
 
-        // Event listeners
-        page2Btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            setState(1);
-        });
+        // attach both click and touch
+        page2Btn.addEventListener('click', (e) => { e.preventDefault(); setState(1); });
+        page2Btn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(1); }, { passive: false });
         
-        page2Btn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            setState(1);
-        });
-
-        page3Btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            setState(2);
-        });
+        page3Btn.addEventListener('click', (e) => { e.preventDefault(); setState(2); });
+        page3Btn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(2); }, { passive: false });
         
-        page3Btn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            setState(2);
-        });
-
-        page4Btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            setState(3);
-        });
+        page4Btn.addEventListener('click', (e) => { e.preventDefault(); setState(3); });
+        page4Btn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(3); }, { passive: false });
         
-        page4Btn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            setState(3);
-        });
+        resetBtn.addEventListener('click', (e) => { e.preventDefault(); setState(0); });
+        resetBtn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(0); }, { passive: false });
 
-        resetBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            setState(0);
-        });
-        
-        resetBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            setState(0);
-        });
-
-        // ===== MUSIC PLAYER =====
+        // ===== MUSIC =====
         const musicIcon = document.getElementById('musicIcon');
         const audio = document.getElementById('bgMusic');
         const musicSymbol = document.getElementById('musicSymbol');
         let musicPlaying = false;
         
-        function toggleMusic() {
+        function toggleMusic(e) {
+            e.preventDefault();
             if (musicPlaying) {
                 audio.pause();
                 musicSymbol.classList.remove('fa-pause');
                 musicSymbol.classList.add('fa-music');
             } else {
-                audio.play()
-                    .then(function() {
-                        musicSymbol.classList.remove('fa-music');
-                        musicSymbol.classList.add('fa-pause');
-                    })
-                    .catch(function() {
-                        console.log('Music playback failed');
-                    });
+                audio.play().catch(() => {}); // autoplay may be blocked, but user click starts it
+                musicSymbol.classList.remove('fa-music');
+                musicSymbol.classList.add('fa-pause');
             }
             musicPlaying = !musicPlaying;
         }
         
-        musicIcon.addEventListener('click', function(e) {
-            e.preventDefault();
-            toggleMusic();
-        });
-        
-        musicIcon.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            toggleMusic();
-        });
+        musicIcon.addEventListener('click', toggleMusic);
+        musicIcon.addEventListener('touchstart', toggleMusic, { passive: false });
 
-        audio.load();
-        
-        // Initial state
+        // start with cover state
         setState(0);
+
+        // ensure gallery container can scroll even if dynamic height changes (just a safety)
+        const galleryScroll = document.getElementById('galleryScrollArea');
+        if (galleryScroll) {
+            // Force hardware compositing for smooth scroll
+            galleryScroll.style.overflowY = 'auto';
+            galleryScroll.style.webkitOverflowScrolling = 'touch';
+        }
     })();
 </script>
 
-<!-- Your beautiful wishes are all still here! 🎀 -->
+<!-- ensure that page3 is fully scrollable on all devices (extra safety) -->
+<style>
+    /* additional explicit rule */
+    #galleryScrollArea {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+</style>
 </body>
 </html>
