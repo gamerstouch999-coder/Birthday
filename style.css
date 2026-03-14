@@ -1,0 +1,64 @@
+body {
+
+.card{
+  width:90%;
+  max-width:380px;
+}
+
+.page{
+  background:white;
+  color:#444;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.top-img{
+  width:100%;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+/* Gallery */
+
+.gallery{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.gallery img{
+  width:100%;
+  border-radius:10px;
+}
+
+/* Button */
+
+button{
+  background:#ff6ec7;
+  border:none;
+  padding:12px 18px;
+  color:white;
+  border-radius:10px;
+  margin-top:20px;
+  font-size:16px;
+}
+
+/* Hearts */
+
+.heart{
+  position:absolute;
+  font-size:20px;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh)}
+  to{transform:translateY(-10vh)}
+}
+}
