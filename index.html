@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>flip book · fixed gallery + flip</title>
-    <!-- Font Awesome for music icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>flip book · fullscreen birthday</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +12,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        html, body {
+            width: 100%;
             min-height: 100vh;
             background: linear-gradient(145deg, #f8e1ec 0%, #e3c5e8 100%);
             display: flex;
@@ -22,23 +21,40 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            padding: 0.5rem;
+            padding: 0;
+            /* Prevent any page zoom or scroll */
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
-        /* main card container */
+        /* main card container - FULLSCREEN */
         .birthday-book {
-            max-width: 420px;
-            width: 100%;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
             background: transparent;
             perspective: 2500px;
-            margin: 0.5rem auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
         }
 
         .book-spread {
             position: relative;
             width: 100%;
+            max-width: 420px;  /* keeps nice proportions on large phones */
+            height: 80vh;       /* leaves space for buttons */
+            max-height: 700px;
             aspect-ratio: 3 / 4;
             transform-style: preserve-3d;
+            margin: 0 auto;
         }
 
         /* all pages */
@@ -61,32 +77,27 @@
             transform-origin: center right;
         }
 
-        /* PAGE TRANSFORMS – FIXED STATES (each page rotates properly) */
-        /* ----- INITIAL (cover only) ----- */
+        /* PAGE TRANSFORMS */
         #page1 { transform: rotateY(0deg); z-index: 10; }
         #page2 { transform: rotateY(180deg); z-index: 9; }
         #page3 { transform: rotateY(180deg); z-index: 8; }
         #page4 { transform: rotateY(180deg); z-index: 7; }
 
-        /* ----- STATE 1 : pages 2 & 3 visible (wishes + gallery start) ----- */
         .book-spread.show-wishes #page1 { transform: rotateY(-180deg); z-index: 7; }
         .book-spread.show-wishes #page2 { transform: rotateY(0deg); z-index: 10; }
         .book-spread.show-wishes #page3 { transform: rotateY(0deg); z-index: 9; }
         .book-spread.show-wishes #page4 { transform: rotateY(180deg); z-index: 8; }
 
-        /* ----- STATE 2 : pages 3 & 4 visible (gallery + final) ----- */
         .book-spread.show-gallery #page1 { transform: rotateY(-180deg); z-index: 7; }
         .book-spread.show-gallery #page2 { transform: rotateY(-180deg); z-index: 8; }
         .book-spread.show-gallery #page3 { transform: rotateY(0deg); z-index: 10; }
         .book-spread.show-gallery #page4 { transform: rotateY(0deg); z-index: 9; }
 
-        /* ----- STATE 3 : page 4 only (final) ----- */
         .book-spread.show-final #page1 { transform: rotateY(-180deg); z-index: 7; }
         .book-spread.show-final #page2 { transform: rotateY(-180deg); z-index: 8; }
         .book-spread.show-final #page3 { transform: rotateY(-180deg); z-index: 9; }
         .book-spread.show-final #page4 { transform: rotateY(0deg); z-index: 10; }
 
-        /* typography */
         h2 {
             font-size: 1.6rem;
             font-weight: 600;
@@ -99,7 +110,6 @@
             flex-shrink: 0;
         }
 
-        /* image container */
         .image-container {
             width: 100%;
             height: 140px;
@@ -136,38 +146,46 @@
             color: #c87ebd;
         }
 
-        /* ---------- FIXED GALLERY LAYOUT (page 3) ---------- */
+        /* GALLERY SCROLL FIX */
         #page3 {
-            overflow: hidden !important;       /* keep page boundary tight */
+            overflow: hidden !important;
             display: flex;
             flex-direction: column;
-            padding: 1rem 0.7rem 0.7rem 0.7rem;
+            padding: 0.8rem 0.7rem 0.7rem 0.7rem;
+            height: 100%;
         }
 
         .gallery-header {
             flex-shrink: 0;
             text-align: center;
             margin-bottom: 0.3rem;
+            padding: 0 0.2rem;
         }
 
+        /* Scroll container */
         .gallery-scroll-area {
             flex: 1 1 auto;
-            min-height: 0;                     /* crucial for flex child scrolling */
+            min-height: 0;
+            height: 100%;
             overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
-            padding-right: 4px;
+            -webkit-overflow-scrolling: touch !important;
             margin: 0.2rem 0 0.3rem 0;
-            scrollbar-width: thin;
-            border-radius: 8px;
+            padding-right: 3px;
+            width: 100%;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
 
         .gallery-scroll-area::-webkit-scrollbar {
             width: 4px;
+            display: block;
         }
+        
         .gallery-scroll-area::-webkit-scrollbar-track {
             background: #ffe7f2;
             border-radius: 10px;
         }
+        
         .gallery-scroll-area::-webkit-scrollbar-thumb {
             background: #d9a3c9;
             border-radius: 10px;
@@ -178,6 +196,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 0.7rem;
             padding: 0.3rem 0.2rem 0.8rem 0.2rem;
+            min-height: fit-content;
         }
 
         .gallery-grid img {
@@ -188,9 +207,10 @@
             border: 2px solid white;
             box-shadow: 0 4px 10px #d9a3c9;
             background: #f3d3e8;
+            pointer-events: auto;
         }
 
-        /* wishes text scrollable */
+        /* Wishes text scrollable */
         .wishes-text {
             font-size: 0.95rem;
             line-height: 1.4;
@@ -206,37 +226,17 @@
             min-height: 0;
         }
 
-        /* music button */
-        .music-toggle {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            background: #c87ebd;
-            color: white;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 6px 15px #b76eb0;
-            cursor: pointer;
-            z-index: 9999;
-            border: 3px solid #ffd9e8;
-            pointer-events: auto;
-        }
-
-        /* navigation buttons */
+        /* navigation buttons - bigger for mobile */
         .nav-buttons {
             display: flex;
             gap: 0.5rem;
-            margin: 1rem 0 1.5rem;
+            margin: 0.8rem 0 0.5rem;
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
             max-width: 420px;
             z-index: 9998;
+            padding: 0 0.5rem;
         }
         
         .nav-btn {
@@ -244,7 +244,7 @@
             border: none;
             color: white;
             font-size: 1rem;
-            padding: 0.8rem 0.3rem;
+            padding: 0.9rem 0.3rem;
             border-radius: 40px;
             font-weight: 600;
             box-shadow: 0 4px 0 #6d3f74;
@@ -255,7 +255,6 @@
             text-align: center;
             -webkit-appearance: none;
             touch-action: manipulation;
-            transition: transform 0.1s, box-shadow 0.1s;
             z-index: 9999;
         }
         
@@ -280,11 +279,25 @@
             opacity: 0.8;
             flex-shrink: 0;
         }
+
+        /* Force hardware acceleration */
+        .gallery-scroll-area, .wishes-text {
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
         
         @media (max-width: 380px) {
             h2 { font-size: 1.4rem; }
-            .nav-btn { font-size: 0.9rem; padding: 0.7rem 0.2rem; }
+            .nav-btn { font-size: 0.9rem; padding: 0.8rem 0.2rem; }
             .image-container { height: 120px; }
+            .book-spread { height: 75vh; }
+        }
+
+        /* Landscape support */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .book-spread { height: 70vh; }
+            .image-container { height: 100px; }
+            h2 { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -295,7 +308,7 @@
         <!-- PAGE 1 (COVER) -->
         <div class="page" id="page1">
             <div class="image-container">
-                <img src="images/1.jpeg" alt="cover image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/1.jpeg</div>';">
+                <img src="images/1.jpeg" alt="cover image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-heart\'></i>place photo<br>images/1.jpeg</div>';">
             </div>
             <h2> Happy Birthday<br> Nurul Hazwani <br> My Love </h2>
             <div style="flex:1; display: flex; flex-direction: column; justify-content: center;">
@@ -308,7 +321,7 @@
         <!-- PAGE 2 (WISHES) -->
         <div class="page" id="page2">
             <div class="image-container">
-                <img src="images/2.jpeg" alt="wishes image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/2.jpeg</div>';">
+                <img src="images/2.jpeg" alt="wishes image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-heart\'></i>place photo<br>images/2.jpeg</div>';">
             </div>
             <h2>💖 For You 💖</h2>
             <div class="wishes-text">
@@ -317,6 +330,8 @@
                 <p style="margin-top:0.6rem;">Saya doakan awak sentiasa sihat, bahagia, dan berjaya dalam semua yang awak lakukan. Semoga semua impian awak tercapai, dan hidup awak penuh warna-warni kegembiraan.</p>
                 <p style="margin-top:0.6rem;">I love you more than all the stars. 🌟</p>
                 <p style="font-size:2rem; text-align:center;">💕</p>
+                <p style="margin-top:1rem;">You mean everything to me. Every day with you is a blessing. Can't wait to celebrate many more birthdays together!</p>
+                <p style="margin-top:1rem; font-style:italic;">Forever yours,<br>Arif</p>
             </div>
             <div class="page-footnote">page 2 · wishes</div>
         </div>
@@ -326,10 +341,9 @@
             <div class="gallery-header">
                 <h2>📸 our memories</h2>
             </div>
-            <!-- dedicated scrollable container -->
             <div class="gallery-scroll-area" id="galleryScrollArea">
                 <div class="gallery-grid" id="galleryGrid">
-                    <!-- 20 gallery images will be injected via JS -->
+                    <!-- 20 gallery images will be injected -->
                 </div>
             </div>
             <div style="text-align: center; color: #b0729e; font-size:0.9rem; margin: 0.1rem 0 0.1rem;">❤️ 20 beautiful moments ❤️</div>
@@ -339,7 +353,7 @@
         <!-- PAGE 4 (FINAL WISHES) -->
         <div class="page" id="page4">
             <div class="image-container">
-                <img src="images/4.jpeg" alt="final image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-image\'></i>EDIT IMAGE SIZE<br>place your photo here<br>images/4.jpeg</div>';">
+                <img src="images/4.jpeg" alt="final image" onerror="this.parentElement.innerHTML='<div class=\'placeholder-text\'><i class=\'fas fa-heart\'></i>place photo<br>images/4.jpeg</div>';">
             </div>
             <h2>✨ More Love ✨</h2>
             <div class="wishes-text">
@@ -355,23 +369,15 @@
             <div class="page-footnote">page 4 · final wishes</div>
         </div>
     </div>
-</div>
 
-<!-- navigation buttons -->
-<div class="nav-buttons">
-    <button class="nav-btn" id="resetBtn" disabled>🔖 cover</button>
-    <button class="nav-btn" id="page2Btn">💗 wishes</button>
-    <button class="nav-btn" id="page3Btn">📸 gallery</button>
-    <button class="nav-btn" id="page4Btn">💜 final</button>
+    <!-- navigation buttons -->
+    <div class="nav-buttons">
+        <button class="nav-btn" id="resetBtn" disabled>🔖 cover</button>
+        <button class="nav-btn" id="page2Btn">💗 wishes</button>
+        <button class="nav-btn" id="page3Btn">📸 gallery</button>
+        <button class="nav-btn" id="page4Btn">💜 final</button>
+    </div>
 </div>
-
-<!-- music toggle -->
-<div class="music-toggle" id="musicIcon">
-    <i class="fas fa-music" id="musicSymbol"></i>
-</div>
-<audio id="bgMusic" loop preload="auto">
-    <source src="music/love.mp3" type="audio/mpeg">
-</audio>
 
 <script>
     (function() {
@@ -380,13 +386,12 @@
         if (galleryGrid) {
             let html = '';
             for (let i = 4; i <= 23; i++) {
-                // using placeholder images with memory number
                 html += `<img src="gallery/${i}.jpeg" alt="memory ${i}" onerror="this.src='https://via.placeholder.com/300x300/ffd9e8/ca7ba3?text=memory+${i}';">`;
             }
             galleryGrid.innerHTML = html;
         }
 
-        // ===== BOOK FLIP (FIXED STATE) =====
+        // ===== BOOK FLIP =====
         const spread = document.getElementById('bookSpread');
         const resetBtn = document.getElementById('resetBtn');
         const page2Btn = document.getElementById('page2Btn');
@@ -396,7 +401,6 @@
         let currentState = 0; // 0=cover, 1=wishes, 2=gallery, 3=final
 
         function setState(state) {
-            // Remove all state classes
             spread.classList.remove('show-wishes', 'show-gallery', 'show-final');
             
             if (state === 1) {
@@ -428,7 +432,7 @@
             currentState = state;
         }
 
-        // attach both click and touch
+        // Button handlers
         page2Btn.addEventListener('click', (e) => { e.preventDefault(); setState(1); });
         page2Btn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(1); }, { passive: false });
         
@@ -441,49 +445,42 @@
         resetBtn.addEventListener('click', (e) => { e.preventDefault(); setState(0); });
         resetBtn.addEventListener('touchstart', (e) => { e.preventDefault(); setState(0); }, { passive: false });
 
-        // ===== MUSIC =====
-        const musicIcon = document.getElementById('musicIcon');
-        const audio = document.getElementById('bgMusic');
-        const musicSymbol = document.getElementById('musicSymbol');
-        let musicPlaying = false;
-        
-        function toggleMusic(e) {
-            e.preventDefault();
-            if (musicPlaying) {
-                audio.pause();
-                musicSymbol.classList.remove('fa-pause');
-                musicSymbol.classList.add('fa-music');
-            } else {
-                audio.play().catch(() => {}); // autoplay may be blocked, but user click starts it
-                musicSymbol.classList.remove('fa-music');
-                musicSymbol.classList.add('fa-pause');
-            }
-            musicPlaying = !musicPlaying;
-        }
-        
-        musicIcon.addEventListener('click', toggleMusic);
-        musicIcon.addEventListener('touchstart', toggleMusic, { passive: false });
-
-        // start with cover state
+        // Start with cover
         setState(0);
 
-        // ensure gallery container can scroll even if dynamic height changes (just a safety)
-        const galleryScroll = document.getElementById('galleryScrollArea');
-        if (galleryScroll) {
-            // Force hardware compositing for smooth scroll
-            galleryScroll.style.overflowY = 'auto';
-            galleryScroll.style.webkitOverflowScrolling = 'touch';
-        }
+        // Prevent body scroll when touching inside scrollable areas
+        const scrollAreas = document.querySelectorAll('.gallery-scroll-area, .wishes-text');
+        scrollAreas.forEach(area => {
+            area.addEventListener('touchstart', (e) => {
+                e.stopPropagation(); // Prevent event from bubbling to body
+            }, { passive: true });
+            
+            area.addEventListener('touchmove', (e) => {
+                // Only stop propagation if we're actually scrolling
+                if (area.scrollHeight > area.clientHeight) {
+                    e.stopPropagation();
+                }
+            }, { passive: true });
+        });
+
+        // Prevent body scroll entirely
+        document.body.addEventListener('touchmove', (e) => {
+            // Allow scroll only if target is inside scrollable area AND it needs scrolling
+            const target = e.target;
+            const scrollable = target.closest('.gallery-scroll-area, .wishes-text');
+            
+            if (!scrollable) {
+                e.preventDefault();
+            } else {
+                // Check if element is actually scrollable in the direction of movement
+                const touch = e.touches[0];
+                // For simplicity, we'll just check if it can scroll vertically
+                if (scrollable.scrollHeight <= scrollable.clientHeight) {
+                    e.preventDefault();
+                }
+            }
+        }, { passive: false });
     })();
 </script>
-
-<!-- ensure that page3 is fully scrollable on all devices (extra safety) -->
-<style>
-    /* additional explicit rule */
-    #galleryScrollArea {
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-    }
-</style>
 </body>
 </html>
